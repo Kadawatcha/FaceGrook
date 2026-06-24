@@ -27,6 +27,8 @@ class profileViewModel : ViewModel() {
     var passwordFormatError by mutableStateOf(false)
     var passwordHasSpace by mutableStateOf(false)
 
+    var repeatPassword by mutableStateOf("")
+
     private var dbPasswordHash = ""
 
     // On utilise cet ID unique pour toutes les opérations Firestore
@@ -157,6 +159,7 @@ class profileViewModel : ViewModel() {
                         dbPasswordHash = SecurityUtils.hashPassword(password)
                     }
                     password = ""
+                    repeatPassword = ""
                     hasChanged = false
                 }
             }

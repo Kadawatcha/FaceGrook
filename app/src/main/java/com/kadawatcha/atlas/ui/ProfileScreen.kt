@@ -34,6 +34,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kadawatcha.atlas.viewmodel.profileViewModel
 import kotlinx.coroutines.launch
@@ -49,8 +50,6 @@ fun ProfileScreen(
     LaunchedEffect(userId) {
         viewModel.loadUserProfile(userId)
     }
-
-    var repeatPassword by remember { mutableStateOf("") }
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -163,8 +162,8 @@ fun ProfileScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             CustomInput(
-                value = repeatPassword,
-                onValueChange = { repeatPassword = it },
+                value = viewModel.repeatPassword,
+                onValueChange = { viewModel.repeatPassword = it },
                 label = "Repeat password",
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(
@@ -181,15 +180,15 @@ fun ProfileScreen(
                             !viewModel.passwordFormatError &&
                             !viewModel.passwordSameAsOld &&
                             !viewModel.passwordHasSpace &&
-                            (viewModel.password.isEmpty() || repeatPassword == viewModel.password)
+                            (viewModel.password.isEmpty() || viewModel.repeatPassword == viewModel.password)
                         ) {
                             viewModel.saveUserProfile()
                         }
                     }
                 ),
-                isError = repeatPassword.isNotEmpty() && repeatPassword != viewModel.password,
+                isError = viewModel.repeatPassword.isNotEmpty() && viewModel.repeatPassword != viewModel.password,
                 supportingText = {
-                    if (repeatPassword.isNotEmpty() && repeatPassword != viewModel.password) {
+                    if (viewModel.repeatPassword.isNotEmpty() && viewModel.repeatPassword != viewModel.password) {
                         Text(
                             text = "Les mots de passe ne correspondent pas",
                             color = MaterialTheme.colorScheme.error,
@@ -220,7 +219,7 @@ fun ProfileScreen(
                         !viewModel.passwordFormatError &&
                         !viewModel.passwordSameAsOld &&
                         !viewModel.passwordHasSpace &&
-                        (viewModel.password.isEmpty() || repeatPassword == viewModel.password)
+                        (viewModel.password.isEmpty() || viewModel.repeatPassword == viewModel.password)
             ) {
                 Text("Sauvegarder")
             }
