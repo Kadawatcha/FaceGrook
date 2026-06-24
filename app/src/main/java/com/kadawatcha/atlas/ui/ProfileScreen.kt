@@ -34,7 +34,6 @@ fun ProfileScreen(
         viewModel.loadUserProfile(userId)
     }
 
-    var password by remember { mutableStateOf("") }
     var repeatPassword by remember { mutableStateOf("") }
 
     Column(
@@ -64,14 +63,30 @@ fun ProfileScreen(
             value = viewModel.username,
             onValueChange = { viewModel.onUsernameChange(it) },
             label = "Username",
-            isError = viewModel.usernameAlreadyTaken,
+            isError = viewModel.usernameAlreadyTaken || viewModel.usernameFormatError || viewModel.usernameHasSpace,
             supportingText = {
-                if (viewModel.usernameAlreadyTaken) {
-                    Text(
-                        text = "Pseudo déjà utilisé",
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodySmall
-                    )
+                when {
+                    viewModel.usernameAlreadyTaken -> {
+                        Text(
+                            text = "Pseudo déjà utilisé",
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                    viewModel.usernameHasSpace -> {
+                        Text(
+                            text = "Les espaces ne sont pas autorisés",
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                    viewModel.usernameFormatError -> {
+                        Text(
+                            text = "Le pseudo doit faire au moins 3 caractères",
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
                 }
             }
         )
@@ -79,15 +94,53 @@ fun ProfileScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         CustomInput(
-            value = password,
-            onValueChange = { password = it },
-            label = "Password"
+            value = viewModel.password,
+            onValueChange = { viewModel.onPasswordChange(it) },
+            label = "Password",
+            isError = viewModel.passwordSameAsOld || viewModel.passwordFormatError || viewModel.passwordHasSpace,
+            supportingText = {
+                when {
+                    viewModel.passwordSameAsOld -> {
+                        Text(
+                            text = "Le nouveau mot de passe doit être différent de l'ancien",
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                    viewModel.passwordHasSpace -> {
+                        Text(
+                            text = "Les espaces ne sont pas autorisés",
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                    viewModel.passwordFormatError -> {
+                        Text(
+                            text = "Le mot de passe doit faire au moins 8 caractères",
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                }
+            }
         )
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         CustomInput(
             value = repeatPassword,
             onValueChange = { repeatPassword = it },
-            label = "Repeat password"
+            label = "Repeat password",
+            isError = repeatPassword.isNotEmpty() && repeatPassword != viewModel.password,
+            supportingText = {
+                if (repeatPassword.isNotEmpty() && repeatPassword != viewModel.password) {
+                    Text(
+                        text = "Les mots de passe ne correspondent pas",
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -97,7 +150,7 @@ fun ProfileScreen(
                 viewModel.saveUserProfile()
             },
             modifier = Modifier.fillMaxWidth(),
-            enabled = !viewModel.isLoading && viewModel.hasChanged
+            enabled = !viewModel.isLoading && viewModel.hasChanged && (viewModel.password.isEmpty() || repeatPassword == viewModel.password)
         ) {
             Text("Sauvegarder")
         }
