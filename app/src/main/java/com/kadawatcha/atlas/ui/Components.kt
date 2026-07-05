@@ -1,7 +1,5 @@
 package com.kadawatcha.atlas.ui
 
-import android.graphics.drawable.shapes.RoundRectShape
-import android.text.Layout
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
