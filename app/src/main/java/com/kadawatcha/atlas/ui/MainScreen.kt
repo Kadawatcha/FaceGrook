@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
@@ -218,7 +219,33 @@ fun MainScreen(
 
                     // Route pour les amis
                     composable("friends") {
-                        // .
+                        val dummyUsers = remember {
+                            List(10) { i ->
+                                com.kadawatcha.atlas.model.User(
+                                    id = "$i",
+                                    username = "Ami #$i",
+                                    role = if (i % 2 == 0) "Member Atlas" else "Explorer"
+                                )
+                            }
+                        }
+
+                        androidx.compose.foundation.lazy.LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(horizontal = 20.dp),
+                            contentPadding = androidx.compose.foundation.layout.PaddingValues(vertical = 16.dp)
+                        ) {
+                            item {
+                                Text(
+                                    text = "My Friends",
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    modifier = Modifier.padding(bottom = 16.dp)
+                                )
+                            }
+                            items(dummyUsers) { user ->
+                                UserCard(user = user)
+                            }
+                        }
                     }
                 }
             }
