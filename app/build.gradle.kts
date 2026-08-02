@@ -6,15 +6,12 @@ plugins {
 
 android {
     namespace = "com.kadawatcha.atlas"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.kadawatcha.atlas"
         minSdk = 26
+        targetSdk = 37
         versionCode = 10
         versionName = "1.13.0"
 
